@@ -29,14 +29,22 @@ def modify_filenames(
     if path.is_file():
         modify_filename(path)
     elif not path.is_dir():
-        raise NotADirectoryError(f"path provided is not a directory: '{path}'")
+        raise NotADirectoryError(
+            f"path provided is not a directory: '{path.absolute()}'"
+        )
+
+    no_files_found = True
 
     # Iterate through directory
     for path_item in path.iterdir():
         if path_item.is_file():
+            no_files_found = False
             modify_filename(path_item, prefix, suffix, oldext, newext)
         elif path_item.is_dir():
             modify_filenames(path_item, prefix, suffix, oldext, newext)
+
+    if no_files_found:
+        print(f"No files found in path: '{path.absolute()}'")
 
 
 def modify_filename(
@@ -60,6 +68,29 @@ def modify_filename(
 
     new_filepath: pathlib.Path = path
 
+    # Verify both extension arguments exist if oldext is passed
+    if oldext and not newext:
+        raise TypeError(
+            f"{modify_filename.__name__}() missing 1 argument: 'newext'"
+        )
+
+    # Replace extension if one is provided
+    if newext:
+        newext = newext.replace(".", "")
+
+        if oldext:
+            oldext = oldext.replace(".", "")
+
+            # Replace only filenames with oldext
+            if new_filepath.suffix == f".{oldext}":
+                new_filepath = pathlib.Path(
+                    f"{path.parent}/{new_filepath.stem}.{newext}"
+                )
+
+        # Replace all filenames' extensions
+        else:
+            new_filepath = pathlib.Path(f"{path.parent}/{new_filepath.stem}.{newext}")
+
     # Insert prefix if one is provided
     if prefix:
         new_filepath = pathlib.Path(f"{path.parent}/{prefix}{new_filepath.name}")
@@ -69,9 +100,6 @@ def modify_filename(
         new_filepath = pathlib.Path(
             f"{path.parent}/{new_filepath.stem}{suffix}{new_filepath.suffix}"
         )
-
-    # Create new file to replace old
-    # new_path = pathlib.Path(f"{path.parent}/{new_filename}")
 
     # Replace old file with new
     path.replace(new_filepath)

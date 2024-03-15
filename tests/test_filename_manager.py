@@ -270,11 +270,11 @@ def create_files(parent_dir: pathlib.Path):
             file.touch()
 
 
-def cleanup(test_dir: pathlib.Path):
+def cleanup(directory: pathlib.Path):
     """Delete the temporary test directory."""
 
-    remove_dir_contents(test_dir)
-    test_dir.rmdir()
+    remove_dir_contents(directory)
+    directory.rmdir()
 
 
 def remove_dir_contents(directory: pathlib.Path):

@@ -70,9 +70,6 @@ def modify_filename(
             f"{path.parent}/{new_filepath.stem}{suffix}{new_filepath.suffix}"
         )
 
-    # Create new file to replace old
-    # new_path = pathlib.Path(f"{path.parent}/{new_filename}")
-
     # Replace old file with new
     path.replace(new_filepath)
 

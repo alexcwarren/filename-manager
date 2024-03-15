@@ -1,11 +1,12 @@
 import pathlib
 import random
-import filename_manager
 
 import pytest
 
+import filename_manager
 
 TEST_DIR = "./.test"
+
 
 class Nums:
     subdir_num = 0
@@ -20,6 +21,7 @@ class Nums:
         num = self.file_num
         self.file_num += 1
         return num
+
 
 nums = Nums()
 
@@ -45,17 +47,27 @@ def test_dir():
 # BEGIN TESTS
 
 
-@pytest.mark.parametrize("prefix", [
-    "pre_"
-])
+def test_bad_path():
+    caught_not_directory_exception = False
+
+    try:
+        filename_manager.modify_filenames(pathlib.Path("a"))
+    except NotADirectoryError:
+        caught_not_directory_exception = True
+
+    assert caught_not_directory_exception
+
+
+@pytest.mark.parametrize("prefix", ["pre_"])
 def test_prefix_only(test_dir, prefix):
     old_filenames = collect_filenames(test_dir)
     filename_manager.modify_filenames(test_dir, prefix)
     new_filenames = collect_filenames(test_dir)
-    
+
     assert len(old_filenames) == len(new_filenames)
     for old in old_filenames:
         assert f"{prefix}{old}" in new_filenames
+
 
 # TODO
 # def test_suffix_only():
@@ -73,16 +85,65 @@ def test_prefix_only(test_dir, prefix):
 # def test_suffix_extension():
 
 # TODO
-# def test_bad_prefixes():
+# def test_prefix_suffix_extension():
+
+
+@pytest.mark.parametrize("bad_prefix", ["pre<"])
+def test_bad_prefix_only(test_dir, bad_prefix):
+    caught_value_exception = False
+
+    try:
+        filename_manager.modify_filenames(test_dir, bad_prefix)
+    except ValueError:
+        caught_value_exception = True
+
+    assert caught_value_exception
+
 
 # TODO
-# def test_bad_suffixes():
+# def test_bad_suffix_only():
 
 # TODO
-# def test_bad_extensions():
+# def test_bad_extension_only():
 
 # TODO
-# def test_bad_path():
+# def test_bad_prefix_good_suffix():
+
+# TODO
+# def test_bad_prefix_good_extension():
+
+# TODO
+# def test_bad_suffix_good_extension():
+
+# TODO
+# def test_good_prefix_bad_suffix():
+
+# TODO
+# def test_good_prefix_bad_extension():
+
+# TODO
+# def test_good_suffix_bad_extension():
+
+# TODO
+# def test_good_prefix_good_suffix_bad_extension():
+
+# TODO
+# def test_good_prefix_bad_suffix_good_extension():
+
+# TODO
+# def test_good_prefix_bad_suffix_bad_extension():
+
+# TODO
+# def test_bad_prefix_good_suffix_good_extension():
+
+# TODO
+# def test_bad_prefix_good_suffix_bad_extension():
+
+# TODO
+# def test_bad_prefix_bad_suffix_good_extension():
+
+# TODO
+# def test_bad_prefix_bad_suffix_bad_extension():
 
 
 # END TESTS
@@ -115,7 +176,9 @@ def create_files(parent_dir: pathlib.Path):
     file_extensions = ["txt", "exe", "doc", "png"]
 
     for i in range(random.randint(1, 10)):
-        file = pathlib.Path(f"{parent_dir}/file{nums.get_next_file_num()}.{random.choice(file_extensions)}")
+        file = pathlib.Path(
+            f"{parent_dir}/file{nums.get_next_file_num()}.{random.choice(file_extensions)}"
+        )
         file.touch()
 
 
@@ -147,5 +210,5 @@ def collect_filenames(directory: pathlib.Path) -> list[str]:
             filenames.extend(collect_filenames(path_item))
         elif path_item.is_file():
             filenames.append(path_item.name)
-    
+
     return filenames

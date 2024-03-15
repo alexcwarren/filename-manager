@@ -1,0 +1,10 @@
+[project]
+name = "filename-manager"
+requires-python = ">= 3.8"
+author = {name = "Alex C Warren", email = "alexcwarren.info@gmail.com"}
+description = "Edit a batch of given filenames following user-defined rules."
+readme = "README.md"
+license = {file = "LICENSE"}
+
+[tool.black]
+line-length = 87

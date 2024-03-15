@@ -3,7 +3,7 @@ import random
 
 import pytest
 
-import filename_manager
+import src.filename_manager.filename_manager as filename_manager
 
 TEST_DIR = "./.test"
 
@@ -88,7 +88,9 @@ def test_prefix_only(test_dir, prefix):
 # def test_prefix_suffix_extension():
 
 
-@pytest.mark.parametrize("bad_prefix", ["pre<"])
+@pytest.mark.parametrize(
+    "bad_prefix", [f"pre{ch}" for ch in filename_manager.FORBIDDEN_CHARACTERS]
+)
 def test_bad_prefix_only(test_dir, bad_prefix):
     caught_value_exception = False
 

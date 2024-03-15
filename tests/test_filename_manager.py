@@ -60,23 +60,41 @@ def test_bad_path(bad_dir):
 
 @pytest.mark.parametrize("prefix", ["pre_"])
 def test_prefix_only(test_dir, prefix):
-    old_filenames = collect_filenames(test_dir)
+    old_filepaths: list[pathlib.Path] = collect_filepaths(test_dir)
     filename_manager.modify_filenames(test_dir, prefix)
-    new_filenames = collect_filenames(test_dir)
+    new_filenames: list[str] = [ filepath.name for filepath in collect_filepaths(test_dir)]
 
-    assert len(old_filenames) == len(new_filenames)
-    for old in old_filenames:
-        assert f"{prefix}{old}" in new_filenames
+    assert len(old_filepaths) == len(new_filenames)
+    for old in old_filepaths:
+        assert f"{prefix}{old.name}" in new_filenames
 
 
-# TODO
-# def test_suffix_only():
+@pytest.mark.parametrize("suffix", ["_SUF"])
+def test_suffix_only(test_dir, suffix):
+    old_filepaths: list[pathlib.Path] = collect_filepaths(test_dir)
+    filename_manager.modify_filenames(test_dir, suffix=suffix)
+    new_filenames: list[str] = [ filepath.name for filepath in collect_filepaths(test_dir)]
+
+    assert len(old_filepaths) == len(new_filenames)
+    for old in old_filepaths:
+        assert f"{old.stem}{suffix}{old.suffix}" in new_filenames
 
 # TODO
 # def test_extension_only():
 
-# TODO
-# def test_prefix_suffix():
+
+def test_prefix_suffix(test_dir):
+    prefix = "PREFIX"
+    suffix = "SUFFIX"
+
+    old_filepaths: list[pathlib.Path] = collect_filepaths(test_dir)
+    filename_manager.modify_filenames(test_dir, prefix, suffix)
+    new_filenames: list[str] = [ filepath.name for filepath in collect_filepaths(test_dir)]
+
+    assert len(old_filepaths) == len(new_filenames)
+    for old in old_filepaths:
+        assert f"{prefix}{old.stem}{suffix}{old.suffix}" in new_filenames
+
 
 # TODO
 # def test_prefix_extension():
@@ -101,21 +119,56 @@ def test_bad_prefix_only(test_dir, bad_prefix):
 
     assert caught_value_exception
 
+@pytest.mark.parametrize(
+    "bad_suffix", [f"suf{ch}" for ch in filename_manager.FORBIDDEN_CHARACTERS]
+)
+def test_bad_suffix_only(test_dir, bad_suffix):
+    caught_value_exception = False
 
-# TODO
-# def test_bad_suffix_only():
+    try:
+        filename_manager.modify_filenames(test_dir, suffix=bad_suffix)
+    except ValueError:
+        caught_value_exception = True
+
+    assert caught_value_exception
 
 # TODO
 # def test_bad_extension_only():
 
-# TODO
-# def test_bad_prefix_good_suffix():
+
+@pytest.mark.parametrize(
+    "bad_prefix", [f"pre{ch}" for ch in filename_manager.FORBIDDEN_CHARACTERS]
+)
+def test_bad_prefix_good_suffix(test_dir, bad_prefix):
+    suffix = "SUFFIX"
+    caught_value_exception = False
+
+    try:
+        filename_manager.modify_filenames(test_dir, bad_prefix, suffix)
+    except ValueError:
+        caught_value_exception = True
+
+    assert caught_value_exception
+
 
 # TODO
 # def test_bad_prefix_good_extension():
 
-# TODO
-# def test_bad_suffix_good_extension():
+
+@pytest.mark.parametrize(
+    "bad_suffix", [f"suf{ch}" for ch in filename_manager.FORBIDDEN_CHARACTERS]
+)
+def test_bad_suffix_good_extension(test_dir, bad_suffix):
+    prefix = "PREFIX"
+    caught_value_exception = False
+
+    try:
+        filename_manager.modify_filenames(test_dir, prefix, bad_suffix)
+    except ValueError:
+        caught_value_exception = True
+
+    assert caught_value_exception
+
 
 # TODO
 # def test_good_prefix_bad_suffix():
@@ -202,15 +255,15 @@ def remove_dir_contents(directory: pathlib.Path):
             path_item.unlink()
 
 
-def collect_filenames(directory: pathlib.Path) -> list[str]:
+def collect_filepaths(directory: pathlib.Path) -> list[pathlib.Path]:
     """Return list of filenames in given directory."""
 
-    filenames = list()
+    filepaths = list()
 
     for path_item in directory.iterdir():
         if path_item.is_dir():
-            filenames.extend(collect_filenames(path_item))
+            filepaths.extend(collect_filepaths(path_item))
         elif path_item.is_file():
-            filenames.append(path_item.name)
+            filepaths.append(path_item)
 
-    return filenames
+    return filepaths

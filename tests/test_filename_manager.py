@@ -46,6 +46,7 @@ def test_dir():
 
 # BEGIN TESTS
 
+
 @pytest.mark.parametrize("bad_dir", ["a"])
 def test_bad_path(bad_dir):
     caught_not_directory_exception = False
@@ -62,7 +63,9 @@ def test_bad_path(bad_dir):
 def test_prefix_only(test_dir, prefix):
     old_filepaths: list[pathlib.Path] = collect_filepaths(test_dir)
     filename_manager.modify_filenames(test_dir, prefix)
-    new_filenames: list[str] = [ filepath.name for filepath in collect_filepaths(test_dir)]
+    new_filenames: list[str] = [
+        filepath.name for filepath in collect_filepaths(test_dir)
+    ]
 
     assert len(old_filepaths) == len(new_filenames)
     for old in old_filepaths:
@@ -73,11 +76,14 @@ def test_prefix_only(test_dir, prefix):
 def test_suffix_only(test_dir, suffix):
     old_filepaths: list[pathlib.Path] = collect_filepaths(test_dir)
     filename_manager.modify_filenames(test_dir, suffix=suffix)
-    new_filenames: list[str] = [ filepath.name for filepath in collect_filepaths(test_dir)]
+    new_filenames: list[str] = [
+        filepath.name for filepath in collect_filepaths(test_dir)
+    ]
 
     assert len(old_filepaths) == len(new_filenames)
     for old in old_filepaths:
         assert f"{old.stem}{suffix}{old.suffix}" in new_filenames
+
 
 # TODO
 # def test_extension_only():
@@ -89,7 +95,9 @@ def test_prefix_suffix(test_dir):
 
     old_filepaths: list[pathlib.Path] = collect_filepaths(test_dir)
     filename_manager.modify_filenames(test_dir, prefix, suffix)
-    new_filenames: list[str] = [ filepath.name for filepath in collect_filepaths(test_dir)]
+    new_filenames: list[str] = [
+        filepath.name for filepath in collect_filepaths(test_dir)
+    ]
 
     assert len(old_filepaths) == len(new_filenames)
     for old in old_filepaths:
@@ -119,6 +127,7 @@ def test_bad_prefix_only(test_dir, bad_prefix):
 
     assert caught_value_exception
 
+
 @pytest.mark.parametrize(
     "bad_suffix", [f"suf{ch}" for ch in filename_manager.FORBIDDEN_CHARACTERS]
 )
@@ -131,6 +140,7 @@ def test_bad_suffix_only(test_dir, bad_suffix):
         caught_value_exception = True
 
     assert caught_value_exception
+
 
 # TODO
 # def test_bad_extension_only():
@@ -232,7 +242,8 @@ def create_files(parent_dir: pathlib.Path):
 
     for i in range(random.randint(1, 10)):
         file = pathlib.Path(
-            f"{parent_dir}/file{nums.get_next_file_num()}.{random.choice(file_extensions)}"
+            f"{parent_dir}"
+            + f"/file{nums.get_next_file_num()}.{random.choice(file_extensions)}"
         )
         file.touch()
 

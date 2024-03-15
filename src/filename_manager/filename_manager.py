@@ -58,17 +58,23 @@ def modify_filename(
                 + f"\n(forbidden characters = {FORBIDDEN_CHARACTERS})"
             )
 
-    new_filename: str = ""
+    new_filepath: pathlib.Path = path
 
     # Insert prefix if one is provided
     if prefix:
-        new_filename = f"{prefix}{path.name}"
+        new_filepath = pathlib.Path(f"{path.parent}/{prefix}{new_filepath.name}")
+
+    # Insert suffix if one is provided
+    if suffix:
+        new_filepath = pathlib.Path(
+            f"{path.parent}/{new_filepath.stem}{suffix}{new_filepath.suffix}"
+        )
 
     # Create new file to replace old
-    new_path = pathlib.Path(f"{path.parent}/{new_filename}")
+    # new_path = pathlib.Path(f"{path.parent}/{new_filename}")
 
     # Replace old file with new
-    path.replace(new_path)
+    path.replace(new_filepath)
 
 
 if __name__ == "__main__":

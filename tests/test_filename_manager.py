@@ -46,12 +46,12 @@ def test_dir():
 
 # BEGIN TESTS
 
-
-def test_bad_path():
+@pytest.mark.parametrize("bad_dir", ["a"])
+def test_bad_path(bad_dir):
     caught_not_directory_exception = False
 
     try:
-        filename_manager.modify_filenames(pathlib.Path("a"))
+        filename_manager.modify_filenames(pathlib.Path(bad_dir))
     except NotADirectoryError:
         caught_not_directory_exception = True
 

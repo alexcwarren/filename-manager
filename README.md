@@ -4,6 +4,7 @@
 ![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
 ![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+[![codecov](https://codecov.io/gh/your-username/filename-manager/graph/badge.svg?token=YOUR_TOKEN_HERE)](https://codecov.io/gh/your-username/filename-manager)
 ![Build](https://img.shields.io/badge/build-passing-success)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blueviolet)
 

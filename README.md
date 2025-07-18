@@ -195,6 +195,19 @@ To test upload (TestPyPI):
 twine upload --repository testpypi dist/*
 ```
 
+To remove `dist/` cleanly (for re-building):
+
+Bash
+
+```bash
+```
+
+PowerShell
+
+```shell
+Remove-Item -Recurse -Force dist
+```
+
 ---
 
 ## 📷 Demo

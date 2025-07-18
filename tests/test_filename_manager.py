@@ -1,7 +1,7 @@
 import pathlib
 
-import pytest
 from file_extensions import FILE_EXTENSIONS
+import pytest
 
 import src.filename_manager.filename_manager as filename_manager
 

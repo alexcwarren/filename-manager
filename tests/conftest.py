@@ -2,9 +2,9 @@ import pathlib
 import random
 import sys
 
-import pytest
 from _test_dir import _TestDir
 from file_extensions import FILE_EXTENSIONS
+import pytest
 
 # Add project root and src to sys.path
 project_root = pathlib.Path(__file__).resolve().parent.parent

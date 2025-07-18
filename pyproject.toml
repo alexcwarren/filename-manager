@@ -147,4 +147,3 @@ known-third-party = ["pytest"]
 #Ensure that imports are grouped by type
 force-sort-within-sections = true
 combine-as-imports = true
-lines-between-types = 1

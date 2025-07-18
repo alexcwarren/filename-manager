@@ -11,18 +11,21 @@ This file can also be imported as a module and contains the following functions:
 
 import argparse
 import pathlib
-import sys
+import re
 
-FORBIDDEN_CHARACTERS = '<>:"/\\|?*'
+FORBIDDEN_CHARACTERS: str = '<>:"/\\|?*'
+ALL: str = "ALL"
 
 
 def modify_filenames(
     path: pathlib.Path,
     prefix: str = None,
     suffix: str = None,
-    oldext: str = None,
-    newext: str = None,
-) -> None:
+    extold: str = None,
+    extnew: str = None,
+    regex: str = None,
+    sub: str = None,
+) -> bool:
     """Modify all filenames contained in given directory path."""
 
     # Confirm path is a valid directory or file
@@ -39,25 +42,31 @@ def modify_filenames(
     for path_item in path.iterdir():
         if path_item.is_file():
             no_files_found = False
-            modify_filename(path_item, prefix, suffix, oldext, newext)
+            modify_filename(path_item, prefix, suffix, extold, extnew, regex, sub)
         elif path_item.is_dir():
-            modify_filenames(path_item, prefix, suffix, oldext, newext)
+            no_files_found = modify_filenames(
+                path_item, prefix, suffix, extold, extnew, regex, sub
+            )
 
     if no_files_found:
-        print(f"No files found in path: '{path.absolute()}'")
+        raise FileNotFoundError(f"No files found in path: '{path.absolute()}'")
+
+    return no_files_found
 
 
 def modify_filename(
     path: pathlib.Path,
     prefix: str = None,
     suffix: str = None,
-    oldext: str = None,
-    newext: str = None,
+    extold: str = None,
+    extnew: str = None,
+    regex: str = None,
+    sub: str = None,
 ) -> None:
     """Modify given filename."""
 
     # Confirm existing arguments are valid
-    for arg in (prefix, suffix, oldext, newext):
+    for arg in (prefix, suffix, extold, extnew, sub):
         if arg is not None and (
             not arg.isprintable() or any(ch in FORBIDDEN_CHARACTERS for ch in arg)
         ):
@@ -68,28 +77,38 @@ def modify_filename(
 
     new_filepath: pathlib.Path = path
 
-    # Verify both extension arguments exist if oldext is passed
-    if oldext and not newext:
+    # Verify both extension arguments exist if one is provided
+    extold_provided: bool = extold is not None
+    extnew_provided: bool = extnew is not None
+    if extold_provided ^ extnew_provided:
+        missing_arg: str = "extnew" if extold_provided else "extold"
         raise TypeError(
-            f"{modify_filename.__name__}() missing 1 argument: 'newext'"
+            f'{modify_filename.__name__}() missing 1 argument: "{missing_arg}".'
         )
 
-    # Replace extension if one is provided
-    if newext:
-        newext = newext.replace(".", "")
+    # Verify both substring arguments exist if one is provided
+    regex_provided: bool = regex is not None
+    sub_provided: bool = sub is not None
+    if regex_provided ^ sub_provided:
+        missing_arg: str = "sub" if regex_provided else "regex"
+        raise TypeError(
+            f'{modify_filename.__name__}() missing 1 argument: "{missing_arg}".'
+        )
 
-        if oldext:
-            oldext = oldext.replace(".", "")
+    # Replace extension if provided
+    if extold and extnew:
+        extnew = extnew.replace(".", "")
+        extold = extold.replace(".", "")
 
-            # Replace only filenames with oldext
-            if new_filepath.suffix == f".{oldext}":
-                new_filepath = pathlib.Path(
-                    f"{path.parent}/{new_filepath.stem}.{newext}"
-                )
+        # Replace only filenames with oldext (or ALL)
+        if extold == ALL or new_filepath.suffix == f".{extold}":
+            new_filepath = pathlib.Path(f"{path.parent}/{new_filepath.stem}.{extnew}")
 
-        # Replace all filenames' extensions
-        else:
-            new_filepath = pathlib.Path(f"{path.parent}/{new_filepath.stem}.{newext}")
+    # Replace substrings if provided
+    if regex_provided and sub_provided:
+        new_filename: str = re.sub(regex, sub, new_filepath.name)
+        new_filepath = new_filepath.with_name(new_filename)
+        # new_filepath = pathlib.Path(re.sub(r"^\d+\.? ?", "", new_filepath))
 
     # Insert prefix if one is provided
     if prefix:
@@ -105,7 +124,8 @@ def modify_filename(
     path.replace(new_filepath)
 
 
-if __name__ == "__main__":
+def main():
+    """Parse command-line arguments and invoke filename modification logic."""
     parser = argparse.ArgumentParser(
         prog="FilenameManager",
         description="Modify all filenames in a given directory.",
@@ -122,16 +142,28 @@ if __name__ == "__main__":
         type=str,
         help="what to put after filenames (but before extension)",
     )
+    parser.add_argument("--extold", type=str, help="extension string to be replaced")
+    parser.add_argument("--extnew", type=str, help="extension string to replace with")
     parser.add_argument(
-        "-o", "--oldext", type=str, help="extension string to be replaced"
+        "-r", "--regex", type=str, help="regular expression to check in filenames"
     )
-    parser.add_argument(
-        "-n", "--newext", type=str, help="extension string to replace with"
-    )
+    parser.add_argument("--sub", type=str, help="substring to replace based on regex")
     args = parser.parse_args()
 
     try:
-        modify_filenames(args.path, args.prefix, args.suffix, args.oldext, args.newext)
-    except (NotADirectoryError, ValueError):
-        print(sys.exception())
+        modify_filenames(
+            args.path,
+            args.prefix,
+            args.suffix,
+            args.extold,
+            args.extnew,
+            args.regex,
+            args.sub,
+        )
+    except (NotADirectoryError, ValueError) as e:
+        print(e)
     print()
+
+
+if __name__ == "__main__":
+    main()

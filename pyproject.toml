@@ -16,6 +16,15 @@ classifiers = [
     "Topic :: Utilities",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "coverage[toml]",
+    "ruff",
+    "black",
+]
+
 [tool.black]
 # Black enforces line-length as an inclusive max (OK up to 87 characters)
 line-length = 87

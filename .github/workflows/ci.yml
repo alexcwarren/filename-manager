@@ -1,0 +1,65 @@
+# This is the name of the workflow that will appear in the GitHub Actions tab.
+name: CI
+
+# This specifies when the workflow should run.
+on:
+  # The workflow will run on every push and pull request to the 'main' branch.
+  push:
+    branches: [ "main", "dev", "feature/**", "chore/**", "fix/**" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+# A workflow is made up of one or more jobs.
+jobs:
+  # The 'build' job handles the main checks for your project.
+  build:
+    # This strategy will create a job for each combination of os and python-version.
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    # This specifies the operating system environment for the job.
+    runs-on: ${{ matrix.os }}
+
+    # A job can contain multiple steps.
+    steps:
+    # The 'actions/checkout@v4' action checks out your repository code.
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # The 'actions/setup-python@v5' action sets up a Python environment.
+    # We specify a matrix of Python versions to test against.
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        # We also set up a cache for dependencies to speed up subsequent runs.
+        cache: "pip"
+
+    # This step installs the required dependencies from pyproject.toml.
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install ".[dev]"
+      # We add a shell property for the Windows runner to ensure it uses the standard shell.
+      shell: bash
+
+    # This step runs the ruff linter to check for code style and errors.
+    # We use '--fix --check' to ensure no fixes are applied, just checked.
+    - name: Run ruff lint
+      run: ruff check . --fix --check
+
+    # This step runs your pytest suite.
+    - name: Run tests
+      run: pytest --cov-report=xml
+
+    # Upload coverage report to Codecov ---
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        # The token is not strictly needed for a public repository, but it's good practice
+        # and required for private repos. The action will automatically detect it.
+        token: ${{ secrets.CODECOV_TOKEN }}
+        # Specify the file path for the coverage report.
+        files: ./coverage.xml

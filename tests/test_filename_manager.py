@@ -270,7 +270,7 @@ def assert_filenames(
             assert filename_pattern(old) not in new_filenames
 
     if not condition_pattern_met:
-        assert False
+        pytest.fail()
 
 
 def assert_exception_caught(

@@ -212,7 +212,7 @@ def test_regex_sub(test_dir, regex, sub):
 def collect_filepaths(directory: pathlib.Path) -> list[pathlib.Path]:
     """Return list of filenames in given directory."""
 
-    filepaths = list()
+    filepaths = []
 
     for path_item in directory.iterdir():
         if path_item.is_dir():

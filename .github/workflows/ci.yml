@@ -48,7 +48,7 @@ jobs:
     # This step runs the ruff linter to check for code style and errors.
     # We use '--fix --check' to ensure no fixes are applied, just checked.
     - name: Run ruff lint
-      run: ruff check . --fix --check
+      run: ruff check .
 
     # This step runs your pytest suite.
     - name: Run tests

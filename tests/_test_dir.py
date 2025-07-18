@@ -30,7 +30,7 @@ class _TestDir:
         For each subdirectory, files will also be created.
         """
 
-        for i in range(random.randint(1, 10)):
+        for _ in range(random.randint(1, 10)):
             # Create subdirectory path
             subdir = pathlib.Path(
                 f"{self.path}/subdir{self.__nums.get_next_subdir_num()}"

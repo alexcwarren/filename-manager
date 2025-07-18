@@ -173,6 +173,14 @@ Run full suite:
 pytest -m "full"
 ```
 
+Run tests and output coverage to HTML file:
+
+```bash
+pytest --cov=src/filename_manager --cov-report=html
+```
+
+Open the generated `htmlcov/index.html` file in a browser to see coverage.
+
 ---
 
 ## 📦 Build & Distribute

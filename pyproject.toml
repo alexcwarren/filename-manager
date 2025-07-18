@@ -25,6 +25,10 @@ dev = [
     "black",
 ]
 
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [tool.black]
 # Black enforces line-length as an inclusive max (OK up to 87 characters)
 line-length = 87

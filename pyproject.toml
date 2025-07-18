@@ -1,5 +1,6 @@
 [project]
 name = "filename-manager"
+version = "0.1.0"
 requires-python = ">= 3.8"
 author = {name = "Alex C Warren", email = "alexcwarren.info@gmail.com"}
 description = "Edit a batch of given filenames following user-defined rules."

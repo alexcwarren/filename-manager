@@ -29,6 +29,12 @@ dev = [
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.pytest.ini_options]
+addopts = "-v -m 'not full' --cov=src/filename_manager --cov-report=term-missing"
+markers = [
+    "full: marks test to only run during 'full' testing"
+]
+
 [tool.coverage.run]
 branch = true
 source = ["src/filename_manager"]

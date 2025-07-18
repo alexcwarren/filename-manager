@@ -133,7 +133,9 @@ def main():
     parser.add_argument(
         "path", type=pathlib.Path, help="the path to directory of files to modify"
     )
-    parser.add_argument("-p", "--prefix", type=str, help="what to put before filenames")
+    parser.add_argument(
+        "-p", "--prefix", type=str, help="what to put before filenames"
+    )
     parser.add_argument(
         "-s",
         "--suffix",

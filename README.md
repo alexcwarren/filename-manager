@@ -1,5 +1,12 @@
 # filename-manager
 
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
+![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+![Build](https://img.shields.io/badge/build-passing-success)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blueviolet)
+
 **A batch renaming tool with user-defined rules.**  
 Rename files in bulk using flexible patterns — ideal for developers, content creators, media managers, and data professionals.
 

@@ -7,6 +7,7 @@ readme = "README.md"
 license = {file = "LICENSE"}
 
 [tool.black]
+# Black enforces line-length as an inclusive max (OK up to 87 characters)
 line-length = 87
 
 [tool.ruff]
@@ -40,7 +41,7 @@ exclude = [
     "venv",
 ]
 
-# Same as Black.
+# Ruff uses an exclusive limit (warns at 88+), so 88 avoids false positives from Black
 line-length = 88
 indent-width = 4
 

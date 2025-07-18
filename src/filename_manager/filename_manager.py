@@ -124,7 +124,8 @@ def modify_filename(
     path.replace(new_filepath)
 
 
-if __name__ == "__main__":
+def main():
+    """Parse command-line arguments and invoke filename modification logic."""
     parser = argparse.ArgumentParser(
         prog="FilenameManager",
         description="Modify all filenames in a given directory.",
@@ -160,3 +161,7 @@ if __name__ == "__main__":
     except (NotADirectoryError, ValueError) as e:
         print(e)
     print()
+
+
+if __name__ == "__main__":
+    main()

@@ -96,7 +96,7 @@ target-version = "py38"
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
 # Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
 # McCabe complexity (`C901`) by default.
-select = ["E4", "E7", "E9", "F"]
+select = ["E4", "E7", "E9", "F", "I"]
 ignore = []
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
@@ -132,3 +132,13 @@ docstring-code-format = false
 # This only has an effect when the `docstring-code-format` setting is
 # enabled.
 docstring-code-line-length = "dynamic"
+
+[tool.ruff.lint.isort]
+# Section for import categories
+known-first-party = ["filename_manager"]
+known-third-party = ["pytest"]
+
+#Ensure that imports are grouped by type
+force-sort-within-sections = true
+combine-as-imports = true
+lines-between-types = 1

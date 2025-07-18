@@ -6,6 +6,15 @@ import pytest
 from _test_dir import _TestDir
 from file_extensions import FILE_EXTENSIONS
 
+# Add project root and src to sys.path
+project_root = pathlib.Path(__file__).resolve().parent.parent
+src_path = project_root / "src"
+
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+if str(src_path) not in sys.path:
+    sys.path.insert(0, str(src_path))
+
 
 def pytest_addoption(parser: pytest.Parser):
     parser.addoption("--keep-test-dir", action="store_true")

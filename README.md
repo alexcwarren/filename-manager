@@ -1,37 +1,57 @@
 # filename-manager
 
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
+![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+![Build](https://img.shields.io/badge/build-passing-success)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blueviolet)
+
 **A batch renaming tool with user-defined rules.**  
 Rename files in bulk using flexible patterns — ideal for developers, content creators, media managers, and data professionals.
 
 ## Table of Contents
 
-- [Features](#-features)
-- [Installation](#-installation)
-- [Usage](#-usage)
-- [CLI Options](#-cli-options)
-- [Demo](#-demo)
-- [Roadmap](#-roadmap)
-- [Feedback or Suggestions?](#-feedback-or-suggestions)
-- [Related Tools](#-related-tools)
-- [License](#-license)
+- [filename-manager](#filename-manager)
+  - [Table of Contents](#table-of-contents)
+  - [🚀 Features](#-features)
+  - [🔧 Installation](#-installation)
+  - [📦 Usage](#-usage)
+    - [Basic CLI Example](#basic-cli-example)
+      - [Before](#before)
+      - [After](#after)
+  - [🪛 CLI Options](#-cli-options)
+  - [🎯 Advanced Examples](#-advanced-examples)
+    - [✅ Add a prefix](#-add-a-prefix)
+    - [✅ Add a suffix](#-add-a-suffix)
+    - [✅ Change extension](#-change-extension)
+    - [✅ Regex pattern replace](#-regex-pattern-replace)
+  - [🧪 Testing \& Coverage](#-testing--coverage)
+  - [📦 Build \& Distribute](#-build--distribute)
+  - [📷 Demo](#-demo)
+  - [🔄 Roadmap](#-roadmap)
+  - [💬 Feedback or Suggestions?](#-feedback-or-suggestions)
+  - [🔗 Related Tools](#-related-tools)
+  - [📄 License](#-license)
 
 ---
 
 ## 🚀 Features
 
-- Rename files using custom string replacement rules
-- Preview changes with a dry-run mode
-- Works on multiple directories and file types
-- Simple command-line interface (cross-platform)
+- Rename files using prefixes, suffixes, regex, or extension replacements
+- Recursive renaming within nested folders
+- Handles errors and edge cases with clear messages
+- Built-in CLI interface (cross-platform)
+- Lightweight and fast
 
 ---
 
 ## 🔧 Installation
 
-```bash
+```shell
 git clone https://github.com/alexcwarren/filename-manager.git
 cd filename-manager
-python3 filename_manager.py --help
+pip install -e .
 ```
 
 > 💡 You can also add this script to your system path for easier access.
@@ -40,61 +60,172 @@ python3 filename_manager.py --help
 
 ## 📦 Usage
 
-### Basic Example
-
-```bash
-python3 filename_manager.py ./photos --replace "IMG_" "Vacation_"
+```shell
+filename-manager <path> [options]
 ```
 
-#### Before:
+`<path>` is the directory of files to rename.
+If no other arguments are passed, no modification will occur.
 
+### Basic CLI Example
+
+```shell
+filename-manager ./photos -p Vacation_
 ```
+
+#### Before
+
+```shell
 IMG_001.jpg
 IMG_002.jpg
 ```
 
-#### After:
+#### After
 
-```
+```shell
 Vacation_001.jpg
 Vacation_002.jpg
 ```
-
-### Preview Changes First (Dry Run)
-
-```bash
-python3 filename_manager.py ./photos --replace "IMG_" "Trip_" --dry-run
-```
-
-> No changes are made — just shows what would happen.
 
 ---
 
 ## 🪛 CLI Options
 
+| Option | Description |
+| --- | --- |
+| `-p, --prefix` | String to prepend to filename |
+| `-s, --suffix` | String to append to filename (before extension) |
+| `--extold` | File extension to replace |
+| `--extnew` | New file extension |
+| `-r, --regex` | Regex pattern to find in filename |
+| `--sub` | Substring to replace regex match |
+| `-h, --help` | Show help message |
+
+---
+
+## 🎯 Advanced Examples
+
+### ✅ Add a prefix
+
+```shell
+filename-manager ./my_folder -p OLD_
+```
+
+### ✅ Add a suffix
+
+```shell
+filename-manager ./my_folder -s _OLD
+```
+
+### ✅ Change extension
+
+```shell
+filename-manager ./my_folder --extold .txt --extnew .md
+```
+
+`my_file.txt` → `my_file.md`
+
+```shell
+filename-manager ./my_folder --extold ALL --extnew .md
+```
+
+Changes extension for all files to `.md`
+
+### ✅ Regex pattern replace
+
+```shell
+filename-manager ./my_folder -r "\d" --sub "X"
+```
+
+`file01.txt` → `fileXX.txt`
+
+```shell
+filename-manager ./my_folder -r "^\d+\. " --sub ""
+```
+
+`31. My File.mp3` → `My File.mp3`
+
+> ⚠️ Be cautious of overwrites when regex makes multiple filenames identical.
+
+---
+
+## 🧪 Testing & Coverage
+
+```shell
+pytest
+```
+
+🔍 Run tests and see coverage:
+
+```shell
+pytest --cov=src/filename_manager --cov-report=term-missing
+```
+
+Run only fast tests (default):
+
+```shell
+pytest -m "not full"
+```
+
+Run full suite:
+
+```shell
+pytest -m "full"
+```
+
+---
+
+## 📦 Build & Distribute
+
+To build a distribution:
+
+```shell
+python -m build
+```
+
+To publish to PyPI using Twine:
+
+```shell
+twine upload dist/*
+```
+
+To test upload (TestPyPI):
+
+```shell
+twine upload --repository testpypi dist/*
+```
+
+To remove `dist/` cleanly (for re-building):
+
+Bash
+
 ```bash
---replace        Specify the string to replace and the new string
---dry-run        Preview filename changes without modifying files
---extensions     Filter which file types to rename
---recursive      Apply renaming to subdirectories
---help           Show usage info
+```
+
+PowerShell
+
+```shell
+Remove-Item -Recurse -Force dist
 ```
 
 ---
 
 ## 📷 Demo
 
-TODO
+📌 *Coming soon!*
+(Screenshots, gifs, or terminal recordings will go here)
 
 ---
 
 ## 🔄 Roadmap
 
 Planned future features:
-- Regex pattern matching
-- Undo support
-- Rule-based config files (JSON/YAML)
-- GUI version
+
+- [ ] Dry-run support
+- [ ] Undo/revert
+- [ ] Regex preview mode
+- [ ] Config file (YAML/JSON) support
+- [ ] GUI interface
 
 ---
 

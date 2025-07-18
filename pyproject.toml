@@ -6,6 +6,15 @@ author = {name = "Alex C Warren", email = "alexcwarren.info@gmail.com"}
 description = "Edit a batch of given filenames following user-defined rules."
 readme = "README.md"
 license = {file = "LICENSE"}
+keywords = ["filenames", "batch rename", "cli", "utilities", "files"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Topic :: Utilities",
+]
 
 [tool.black]
 # Black enforces line-length as an inclusive max (OK up to 87 characters)

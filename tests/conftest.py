@@ -7,16 +7,16 @@ from file_extensions import FILE_EXTENSIONS
 import pytest
 
 # Add project root and src to sys.path
-project_root = pathlib.Path(__file__).resolve().parent.parent
-src_path = project_root / "src"
+# project_root = pathlib.Path(__file__).resolve().parent.parent
+# src_path = project_root / "src"
 
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-if str(src_path) not in sys.path:
-    sys.path.insert(0, str(src_path))
+# if str(project_root) not in sys.path:
+# sys.path.insert(0, str(project_root))
+# if str(src_path) not in sys.path:
+# sys.path.insert(0, str(src_path))
 
 
-def pytest_addoption(parser: pytest.Parser):
+def pytest_addoption(parser: pytest.Parser) -> None:
     parser.addoption("--keep-test-dir", action="store_true")
     parser.addoption("--seed")
 
@@ -33,7 +33,7 @@ def test_dir(request: pytest.FixtureRequest) -> pathlib.Path:
         print(testdir)
 
     # Create nested function to call upon when pytest concludes
-    def finalizer():
+    def finalizer() -> None:
         if not keep_test_dir:
             testdir.cleanup()
 
@@ -43,5 +43,5 @@ def test_dir(request: pytest.FixtureRequest) -> pathlib.Path:
 
 
 @pytest.fixture(scope="session")
-def file_extensions():
+def file_extensions() -> list[str]:
     return FILE_EXTENSIONS

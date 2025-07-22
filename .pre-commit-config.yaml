@@ -1,0 +1,24 @@
+# A list of repositories to check.
+# This specifies where to find the hooks.
+repos:
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  # Use the latest version.
+  # The version must match the version you have in pyproject.toml
+  rev: v0.4.5
+  hooks:
+  - id: ruff
+    # We use `--fix` here so ruff automatically fixes issues on commit,
+    # which prevents most of the errors you experienced.
+    args: [ "--fix" ]
+  - id: ruff-format
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v1.10.0  # Use the latest version
+  hooks:
+  - id: mypy
+    # We will pass a command line argument to mypy to include the pyproject.toml configuration.
+    files: ^src/
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v1.10.0
+  hooks:
+  - id: mypy
+    files: ^tests/

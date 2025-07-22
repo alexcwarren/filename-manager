@@ -45,10 +45,21 @@ jobs:
       # We add a shell property for the Windows runner to ensure it uses the standard shell.
       shell: bash
 
+    # Check code formatting with ruff-format.
+    # The '--check' flag ensures the step fails if files are not correctly formatted.
+    - name: Check code formatting with ruff-format
+      run: ruff format . --check
+
     # This step runs the ruff linter to check for code style and errors.
     # We use '--fix --check' to ensure no fixes are applied, just checked.
     - name: Run ruff lint
       run: ruff check .
+
+    # This step runs the mypy type checker on src and tests directories separately.
+    - name: Run mypy on src
+      run: mypy src
+    - name: Run mypy on tests
+      run: mypy tests
 
     # This step runs your pytest suite.
     - name: Run tests

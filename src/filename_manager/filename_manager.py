@@ -25,7 +25,6 @@ def modify_filenames(
     extnew: str | None = None,
     regex: str | None = None,
     sub: str | None = None,
-
 ) -> bool:
     """Modify all filenames contained in given directory path."""
 

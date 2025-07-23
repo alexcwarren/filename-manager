@@ -44,11 +44,7 @@ def modify_filenames(
         if path_item.is_file():
             no_files_found = False
             modify_filename(path_item, prefix, suffix, extold, extnew, regex, sub)
-            modify_filename(path_item, prefix, suffix, extold, extnew, regex, sub)
         elif path_item.is_dir():
-            no_files_found = modify_filenames(
-                path_item, prefix, suffix, extold, extnew, regex, sub
-            )
             no_files_found = modify_filenames(
                 path_item, prefix, suffix, extold, extnew, regex, sub
             )

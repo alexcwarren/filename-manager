@@ -55,11 +55,13 @@ jobs:
     - name: Run ruff lint
       run: ruff check .
 
-    # This step runs the mypy type checker on src and tests directories separately.
+    # This step runs the mypy type checker on src, tests, and scripts directories separately.
     - name: Run mypy on src
       run: mypy src
     - name: Run mypy on tests
       run: mypy tests
+    - name: Run mypy on scripts
+      run: mypy scripts
 
     # This step runs your pytest suite.
     - name: Run tests

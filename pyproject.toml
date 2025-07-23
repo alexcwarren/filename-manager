@@ -151,7 +151,8 @@ disallow_incomplete_defs = true
 check_untyped_defs = true
 ignore_missing_imports = true
 no_implicit_optional = true
-# Tells mypy to only check the package "filename_manager".
+files = ["src", "tests", "scripts"]
+# # Tells mypy to only check the package "filename_manager".
 packages = ["filename_manager"]
 mypy_path = "src"
 

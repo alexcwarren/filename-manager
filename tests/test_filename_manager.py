@@ -5,6 +5,7 @@ from typing import Callable
 
 from file_extensions import FILE_EXTENSIONS
 import pytest
+from file_extensions import FILE_EXTENSIONS
 
 import filename_manager.filename_manager as filename_manager
 

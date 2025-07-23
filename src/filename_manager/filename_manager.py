@@ -12,6 +12,7 @@ This file can also be imported as a module and contains the following functions:
 import argparse
 import pathlib
 import re
+from typing import Optional
 
 FORBIDDEN_CHARACTERS: str = '<>:"/\\|?*'
 ALL: str = "ALL"
@@ -19,12 +20,12 @@ ALL: str = "ALL"
 
 def modify_filenames(
     path: pathlib.Path,
-    prefix: str | None = None,
-    suffix: str | None = None,
-    extold: str | None = None,
-    extnew: str | None = None,
-    regex: str | None = None,
-    sub: str | None = None,
+    prefix: Optional[str] = None,
+    suffix: Optional[str] = None,
+    extold: Optional[str] = None,
+    extnew: Optional[str] = None,
+    regex: Optional[str] = None,
+    sub: Optional[str] = None,
 ) -> bool:
     """Modify all filenames contained in given directory path."""
 
@@ -56,12 +57,12 @@ def modify_filenames(
 
 def modify_filename(
     path: pathlib.Path,
-    prefix: str | None = None,
-    suffix: str | None = None,
-    extold: str | None = None,
-    extnew: str | None = None,
-    regex: str | None = None,
-    sub: str | None = None,
+    prefix: Optional[str] = None,
+    suffix: Optional[str] = None,
+    extold: Optional[str] = None,
+    extnew: Optional[str] = None,
+    regex: Optional[str] = None,
+    sub: Optional[str] = None,
 ) -> None:
     """Modify given filename."""
 

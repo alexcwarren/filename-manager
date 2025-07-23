@@ -41,6 +41,39 @@ build-backend = "hatchling.build"
 [tool.hatch.metadata]
 allow-direct-references = true
 
+[tool.hatch.envs.default]
+# Define the dependencies for your default development environment here.
+# This replaces the need for a separate `install-dev` script,
+# as 'hatch run' will ensure these are installed in its managed environment.
+dependencies = [
+    "pytest",
+    "pytest-cov",
+    "coverage[toml]",
+    "ruff",
+    "pre-commit",
+    "mypy",
+]
+
+[tool.hatch.envs.default.scripts]
+clean = "python scripts/clean.py"
+format = "ruff format ."
+lint = "ruff check . --fix"
+typecheck = "mypy src tests scripts"
+test = "pytest --cov-report=xml"
+build = "python -m build"
+ci = "hatch run format && hatch run lint && hatch run typecheck && hatch run test"
+help = """
+        echo "Available commands (run with 'hatch run <command>'):"
+        echo "  clean       - Clean up build artifacts and cache files."
+        echo "  format      - Format code with ruff-format."
+        echo "  lint        - Lint code with ruff check."
+        echo "  typecheck   - Run mypy type checker."
+        echo "  test        - Run pytest tests and generate coverage."
+        echo "  build       - Build distribution packages."
+        echo "  ci          - Run format, lint, typecheck, and test (like CI)."
+        echo "  help        - Display this help message."
+    """
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 addopts = "-v -m 'not full' --cov=src/filename_manager --cov-report=term-missing"

@@ -12,6 +12,7 @@ This file can also be imported as a module and contains the following functions:
 import argparse
 import pathlib
 import re
+from typing import Optional
 
 FORBIDDEN_CHARACTERS: str = '<>:"/\\|?*'
 ALL: str = "ALL"
@@ -19,12 +20,12 @@ ALL: str = "ALL"
 
 def modify_filenames(
     path: pathlib.Path,
-    prefix: str = None,
-    suffix: str = None,
-    extold: str = None,
-    extnew: str = None,
-    regex: str = None,
-    sub: str = None,
+    prefix: Optional[str] = None,
+    suffix: Optional[str] = None,
+    extold: Optional[str] = None,
+    extnew: Optional[str] = None,
+    regex: Optional[str] = None,
+    sub: Optional[str] = None,
 ) -> bool:
     """Modify all filenames contained in given directory path."""
 
@@ -56,12 +57,12 @@ def modify_filenames(
 
 def modify_filename(
     path: pathlib.Path,
-    prefix: str = None,
-    suffix: str = None,
-    extold: str = None,
-    extnew: str = None,
-    regex: str = None,
-    sub: str = None,
+    prefix: Optional[str] = None,
+    suffix: Optional[str] = None,
+    extold: Optional[str] = None,
+    extnew: Optional[str] = None,
+    regex: Optional[str] = None,
+    sub: Optional[str] = None,
 ) -> None:
     """Modify given filename."""
 
@@ -76,12 +77,13 @@ def modify_filename(
             )
 
     new_filepath: pathlib.Path = path
+    missing_arg: str = ""
 
     # Verify both extension arguments exist if one is provided
     extold_provided: bool = extold is not None
     extnew_provided: bool = extnew is not None
     if extold_provided ^ extnew_provided:
-        missing_arg: str = "extnew" if extold_provided else "extold"
+        missing_arg = "extnew" if extold_provided else "extold"
         raise TypeError(
             f'{modify_filename.__name__}() missing 1 argument: "{missing_arg}".'
         )
@@ -90,7 +92,7 @@ def modify_filename(
     regex_provided: bool = regex is not None
     sub_provided: bool = sub is not None
     if regex_provided ^ sub_provided:
-        missing_arg: str = "sub" if regex_provided else "regex"
+        missing_arg = "sub" if regex_provided else "regex"
         raise TypeError(
             f'{modify_filename.__name__}() missing 1 argument: "{missing_arg}".'
         )
@@ -106,7 +108,7 @@ def modify_filename(
 
     # Replace substrings if provided
     if regex_provided and sub_provided:
-        new_filename: str = re.sub(regex, sub, new_filepath.name)
+        new_filename: str = re.sub(regex or "", sub or "", new_filepath.name)
         new_filepath = new_filepath.with_name(new_filename)
         # new_filepath = pathlib.Path(re.sub(r"^\d+\.? ?", "", new_filepath))
 
@@ -124,7 +126,7 @@ def modify_filename(
     path.replace(new_filepath)
 
 
-def main():
+def main() -> None:
     """Parse command-line arguments and invoke filename modification logic."""
     parser = argparse.ArgumentParser(
         prog="FilenameManager",
@@ -133,9 +135,7 @@ def main():
     parser.add_argument(
         "path", type=pathlib.Path, help="the path to directory of files to modify"
     )
-    parser.add_argument(
-        "-p", "--prefix", type=str, help="what to put before filenames"
-    )
+    parser.add_argument("-p", "--prefix", type=str, help="what to put before filenames")
     parser.add_argument(
         "-s",
         "--suffix",

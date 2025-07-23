@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pathlib
 import random
 from string import ascii_letters as alphabet
@@ -7,7 +9,7 @@ from nums import Nums
 
 
 class _TestDir:
-    def __init__(self, dir_path: str, seed: str = None):
+    def __init__(self, dir_path: str, seed: str | None = None):
         self.path: pathlib.Path = pathlib.Path(dir_path)
 
         # Remove test_dir if it exists
@@ -24,13 +26,13 @@ class _TestDir:
 
         self.__create_directories()
 
-    def __create_directories(self, do_create_files: bool = True):
+    def __create_directories(self, do_create_files: bool = True) -> None:
         """Create a random number of subdirectories [1,10] in given directory.
 
         For each subdirectory, files will also be created.
         """
 
-        for i in range(random.randint(1, 10)):
+        for _ in range(random.randint(1, 10)):
             # Create subdirectory path
             subdir = pathlib.Path(
                 f"{self.path}/subdir{self.__nums.get_next_subdir_num()}"
@@ -43,7 +45,7 @@ class _TestDir:
             if do_create_files:
                 self.__create_files(subdir)
 
-    def __create_files(self, dir: pathlib.Path):
+    def __create_files(self, dir: pathlib.Path) -> None:
         """Create a random number of files in given directory.
 
         One to three files will be randomly created for each file extension.

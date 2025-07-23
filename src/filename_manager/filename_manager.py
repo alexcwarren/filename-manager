@@ -12,8 +12,53 @@ This file can also be imported as a module and contains the following functions:
 from __future__ import annotations
 
 import argparse
+import logging
 import pathlib
 import re
+import sys
+
+logger: logging.Logger = logging.getLogger(__name__)
+
+
+def setup_logging(level: int = logging.INFO, log_file: str | None = None) -> None:
+    """
+    Configures the root logger for console and optional file output.
+    """
+    # Get the root logger
+    root_logger = logging.getLogger()
+    root_logger.setLevel(level)  # Set the minimum level for the root logger
+
+    # Clear existing handlers to prevent duplicate messages if called multiple times
+    # (Useful in testing or if setup_logging might be called more than once)
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
+
+    # --- Console Handler (for messages to stderr) ---
+    console_handler = logging.StreamHandler(sys.stderr)
+    # A concise formatter for console output
+    formatter = logging.Formatter("%(levelname)s: %(message)s")
+    console_handler.setFormatter(formatter)
+    console_handler.setLevel(level)  # Ensure console handler respects the overall level
+    root_logger.addHandler(console_handler)
+
+    # --- Optional File Handler ---
+    if log_file:
+        try:
+            file_handler = logging.FileHandler(log_file)
+            # A more detailed formatter for file output
+            file_formatter = logging.Formatter(
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            )
+            file_handler.setFormatter(file_formatter)
+            file_handler.setLevel(
+                logging.DEBUG
+            )  # Typically, file logs are more verbose (DEBUG)
+            # regardless of console level, but can be same as 'level'
+            root_logger.addHandler(file_handler)
+        except Exception as e:
+            # Log this error to console as the file handler setup failed
+            root_logger.error(f"Could not set up log file '{log_file}': {e}")
+
 
 FORBIDDEN_CHARACTERS: str = '<>:"/\\|?*'
 ALL: str = "ALL"
@@ -130,8 +175,8 @@ def modify_filename(
 def main() -> None:
     """Parse command-line arguments and invoke filename modification logic."""
     parser = argparse.ArgumentParser(
-        prog="FilenameManager",
-        description="Modify all filenames in a given directory.",
+        prog="filename-manager",
+        description="Edit a batch of given filenames following user-defined rules.",
     )
     parser.add_argument(
         "path", type=pathlib.Path, help="the path to directory of files to modify"
@@ -149,9 +194,44 @@ def main() -> None:
         "-r", "--regex", type=str, help="regular expression to check in filenames"
     )
     parser.add_argument("--sub", type=str, help="substring to replace based on regex")
+    # Add verbosity arguments for logging level
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="Increase logging verbosity (e.g., -v for INFO, -vv for DEBUG).",
+    )
+    # Add argument for log file
+    parser.add_argument(
+        "--log-file",
+        type=str,
+        help="Path to a file where logs will be written (e.g., filename_manager.log).",
+    )
+
     args = parser.parse_args()
 
+    # Determine log level based on verbosity argument
+    log_level = logging.WARNING  # Default log level if no -v
+    if args.verbose == 1:
+        log_level = logging.INFO
+    elif args.verbose >= 2:  # -vv or more
+        log_level = logging.DEBUG
+    # For very quiet output, you could add an --quiet option setting level to ERROR/CRITICAL
+
+    # --- Configure Logging ---
+    setup_logging(log_level, args.log_file)
+
+    # Now you can use the logger globally or within this module
+    logger.info(
+        "Application started with log level: %s", logging.getLevelName(log_level)
+    )
+    if args.log_file:
+        logger.info("Logging to file: %s", args.log_file)
+    logger.debug("Detailed debug information enabled.")
+
     try:
+        logger.info("Starting file processing...")
         modify_filenames(
             args.path,
             args.prefix,
@@ -161,9 +241,24 @@ def main() -> None:
             args.regex,
             args.sub,
         )
-    except (NotADirectoryError, ValueError) as e:
-        print(e)
-    print()
+        logger.info("File processing complete.")
+    except NotADirectoryError as e:
+        logger.error(
+            f"Error: The specified source path is not a valid directory. Details: {e}"
+        )
+        logger.info("Please ensure the directory exists and you have read permissions.")
+        sys.exit(1)
+    except ValueError as e:
+        logger.error(f"Error: Invalid input value or format encountered. Details: {e}")
+        logger.info(
+            "Please check the contents of your rules file or command-line arguments."
+        )
+        sys.exit(1)
+    except Exception:
+        logger.exception(
+            "An unhandled error occurred during filename manager execution:"
+        )
+        sys.exit(1)
 
 
 if __name__ == "__main__":

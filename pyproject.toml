@@ -18,7 +18,7 @@ classifiers = [
 
 [project.urls]
 "Homepage" = "https://github.com/alexcwarren/filename-manager"
-"Repository" = "https://github.com/alexwarren/filename-manager"
+"Repository" = "https://github.com/alexcwarren/filename-manager"
 "Issues" = "https://github.com/alexcwarren/filename-manager/issues"
 
 [project.optional-dependencies]

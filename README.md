@@ -47,7 +47,7 @@ Rename files in bulk using flexible patterns — ideal for developers, content c
 ```shell
 git clone https://github.com/alexcwarren/filename-manager.git
 cd filename-manager
-pip install -e .
+pip install .
 ```
 
 > 💡 You can also add this script to your system path for easier access.

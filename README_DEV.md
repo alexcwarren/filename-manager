@@ -2,6 +2,16 @@
 
 Edit filenames in a given directory following user-defined rules.
 
+## 🔧 Installation
+
+```shell
+git clone https://github.com/alexcwarren/filename-manager.git
+cd filename-manager
+pip install -e .
+```
+
+> 💡 You can also add this script to your system path for easier access.
+
 ## Usage
 
 ```shell

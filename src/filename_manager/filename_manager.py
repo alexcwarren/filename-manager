@@ -146,9 +146,16 @@ def main() -> None:
     parser.add_argument("--extold", type=str, help="extension string to be replaced")
     parser.add_argument("--extnew", type=str, help="extension string to replace with")
     parser.add_argument(
-        "-r", "--regex", type=str, help="regular expression to check in filenames"
+        "-r",
+        "--regex",
+        type=str,
+        help="regular expression to check in filenames (NOT YET SUPPORTED)",
     )
-    parser.add_argument("--sub", type=str, help="substring to replace based on regex")
+    parser.add_argument(
+        "--sub",
+        type=str,
+        help="substring to replace based on regex (NOT YET SUPPORTED)",
+    )
     args = parser.parse_args()
 
     if args.regex is not None or args.sub is not None:

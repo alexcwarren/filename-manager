@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 import pathlib
-from typing import Callable
 
 from file_extensions import FILE_EXTENSIONS
 import pytest
@@ -227,6 +227,63 @@ def test_regex_sub(test_dir: pathlib.Path, regex: str, sub: str) -> None:
     # assert_filenames(
     #    directory=test_dir,
     # )
+
+
+def test_extension_collision(tmp_path: pathlib.Path) -> None:
+    source = tmp_path / "report.txt"
+    destination = tmp_path / "report.md"
+    source.write_text("TXT", encoding="utf-8")
+    destination.write_text("MD", encoding="utf-8")
+
+    with pytest.raises(FileExistsError):
+        filename_manager.modify_filename(source, extold=".txt", extnew=".md")
+
+    assert source.is_file()
+    assert source.read_text(encoding="utf-8") == "TXT"
+    assert destination.is_file()
+    assert destination.read_text(encoding="utf-8") == "MD"
+
+
+def test_prefix_collision(tmp_path: pathlib.Path) -> None:
+    source = tmp_path / "report.txt"
+    destination = tmp_path / "draft_report.txt"
+    source.write_text("REPORT", encoding="utf-8")
+    destination.write_text("DRAFT", encoding="utf-8")
+
+    with pytest.raises(FileExistsError):
+        filename_manager.modify_filename(source, prefix="draft_")
+
+    assert source.is_file()
+    assert source.read_text(encoding="utf-8") == "REPORT"
+    assert destination.is_file()
+    assert destination.read_text(encoding="utf-8") == "DRAFT"
+
+
+def test_suffix_collision(tmp_path: pathlib.Path) -> None:
+    source = tmp_path / "report.txt"
+    destination = tmp_path / "report_final.txt"
+    source.write_text("REPORT", encoding="utf-8")
+    destination.write_text("FINAL", encoding="utf-8")
+
+    with pytest.raises(FileExistsError):
+        filename_manager.modify_filename(source, suffix="_final")
+
+    assert source.is_file()
+    assert source.read_text(encoding="utf-8") == "REPORT"
+    assert destination.is_file()
+    assert destination.read_text(encoding="utf-8") == "FINAL"
+
+
+def test_rename_without_collision(tmp_path: pathlib.Path) -> None:
+    source = tmp_path / "report.txt"
+    destination = tmp_path / "report.md"
+    source.write_text("TXT", encoding="utf-8")
+
+    filename_manager.modify_filename(source, extold=".txt", extnew=".md")
+
+    assert not source.exists()
+    assert destination.is_file()
+    assert destination.read_text(encoding="utf-8") == "TXT"
 
 
 # END TESTS

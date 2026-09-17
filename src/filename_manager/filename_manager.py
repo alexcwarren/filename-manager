@@ -123,6 +123,12 @@ def modify_filename(
             f"{path.parent}/{new_filepath.stem}{suffix}{new_filepath.suffix}"
         )
 
+    if new_filepath != path and new_filepath.exists():
+        raise FileExistsError(
+            f"Cannot rename '{path.name}' to '{new_filepath.name}': "
+            "destination already exists."
+        )
+
     # Replace old file with new
     path.replace(new_filepath)
 
@@ -146,10 +152,21 @@ def main() -> None:
     parser.add_argument("--extold", type=str, help="extension string to be replaced")
     parser.add_argument("--extnew", type=str, help="extension string to replace with")
     parser.add_argument(
-        "-r", "--regex", type=str, help="regular expression to check in filenames"
+        "-r",
+        "--regex",
+        type=str,
+        help="regular expression to check in filenames (NOT YET SUPPORTED)",
     )
-    parser.add_argument("--sub", type=str, help="substring to replace based on regex")
+    parser.add_argument(
+        "--sub",
+        type=str,
+        help="substring to replace based on regex (NOT YET SUPPORTED)",
+    )
     args = parser.parse_args()
+
+    if args.regex is not None or args.sub is not None:
+        print("WARNING: '--regex' and '--sub' currently not supported.")
+        return
 
     try:
         modify_filenames(
@@ -158,10 +175,10 @@ def main() -> None:
             args.suffix,
             args.extold,
             args.extnew,
-            args.regex,
-            args.sub,
+            # args.regex,
+            # args.sub,
         )
-    except (NotADirectoryError, ValueError) as e:
+    except (NotADirectoryError, ValueError, FileExistsError) as e:
         print(e)
     print()
 

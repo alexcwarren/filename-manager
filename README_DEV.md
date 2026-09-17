@@ -1,63 +1,184 @@
-# filename-manager
+# filename-manager Development Guide
 
-Edit filenames in a given directory following user-defined rules.
+This document covers local development, testing, building, and release verification for `filename-manager`.
 
-## Usage
+For user-facing installation and CLI usage, see [`README.md`](README.md).
+
+## Development Setup
+
+Clone the repository:
 
 ```shell
-python filename_manager.py [-h] [-p PREFIX] [-s SUFFIX] [-o EXTOLD] [-n EXTNEW] [-r REGEX] [--sub SUB] <path>
+git clone https://github.com/alexcwarren/filename-manager.git
+cd filename-manager
 ```
 
-`<path>` is the path to the directory containing the file(s) you want to modify.
-If no other arguments are passed to tell `filename-manager` what/how to modify, no modification will occur.
+Install Hatch if needed:
 
-### `PREFIX`
+```shell
+pip install hatch
+```
 
-This is a string that will *prepend* all files contained in `<path>`.
+Create the Hatch development environment:
 
-`python filename_manager.py -p OLD_ ./my_folder` will *prepend* ALL the files in `my_folder` directory.
-If there's initially a file in `my_folder` named `my_file.txt` this command will modify its name to become `OLDmy_file.txt`.
+```shell
+hatch env create
+```
 
-### `SUFFIX`
+## Common Development Commands
 
-This is a string that will *append* all files contained in `<path>`.
+Format the codebase:
 
-`python filename_manager.py -s _OLD ./my_folder` will *append* ALL the files in `my_folder` directory.
-If there's initially a file in `my_folder` named `my_file.txt` this command will modify its name to become `my_file_OLD.txt`.
+```shell
+hatch run format
+```
 
-### `EXTOLD` and `EXTNEW`
+Lint the codebase and automatically apply supported fixes:
 
-You can modify a specific file extension to another one.
+```shell
+hatch run lint
+```
 
-`python filename_manager.py -o .txt -n .md ./my_folder` will change all files that end with a `.txt` and change that to `.md`.
-If there's initially a file in `my_folder` named `my_file.txt` this command will modify its name to become `my_file.md`.
+Run static type checking:
 
-You can also modify ALL files to have a different extension.
+```shell
+hatch run typecheck
+```
 
-`python filename_manager.py -o ALL -n .md ./my_folder` will change ALL files to have `.md` as its file extension.
+Run the standard test suite:
 
-> **NOTE:** You must provide BOTH `-o` and `-n` arguments. You cannot provide just one of them.
+```shell
+hatch run test
+```
 
-### `REGEX` and `SUB`
+Run all validation checks without modifying the codebase:
 
-You can modify any file that matches a given pattern, `REGEX`, and replace the part of the file name that matches with the string `SUB`.
+```shell
+hatch run check
+```
 
-`python filename_manager.py -r "\d" --sub "X" ./my_folder` will change all files that contain a number in their file name to an `X`.
-If there's initially a file in `my_folder` named `my_file01.txt` this command will modify its name to become `my_fileXX.txt`.
+Use `check` before opening or merging a pull request.
 
-> **NOTE:** You must provide BOTH `-r` and `--sub` arguments. You cannot provide just one of them.
+## Testing
 
-*** This functionality is particularly useful to *remove* matching patterns.
+Run the standard pytest suite:
 
-`python filename_manager.py -r "^\d+\. " "" ./my_folder` will change all files that **start** (`^`) with **one or more** (`+`) **number**s (`\d`) followed by a single **.** (`\.`) and a single space and remove that part.
-If there's a file in `my_folder` named `31. My File.mp3` this command will modify its name to become `My File.mp3`.
+```shell
+pytest
+```
 
-> **WARNING**: This functionaliy may cause certain files to inadvertently be OVERRIDDEN.
->
-> If your directory has a file named `file01.txt` and `file02.txt` this command will change both of these file names to the same value: `fileXX.txt`.
-> This means one file will override the other as a result of the modification.
-> In other words, as long as you have files with unique filenames (without the numbers, in this case) you shouldn't experience any problems.
+Run tests marked as `full`:
 
-*Check out [Regular Expression HOWTO](https://docs.python.org/3/howto/regex.html) for more info on using **regex** in Python.*
+```shell
+pytest -m "full"
+```
 
-*Also, try practicing **regex** at [regex101](https://regex101.com/) or at [Pythex](https://pythex.org/).*
+Run tests with terminal coverage output:
+
+```shell
+pytest --cov=src/filename_manager --cov-report=term-missing
+```
+
+Generate an HTML coverage report:
+
+```shell
+pytest --cov=src/filename_manager --cov-report=html
+```
+
+The generated report is available under:
+
+```text
+htmlcov/
+```
+
+## Building
+
+Remove previous build artifacts and caches:
+
+```shell
+hatch run clean
+```
+
+Build the wheel and source distribution:
+
+```shell
+hatch run build
+```
+
+Build artifacts are written to:
+
+```text
+dist/
+```
+
+A successful build should produce both:
+
+- a `.whl` wheel
+- a `.tar.gz` source distribution
+
+## Release Checks
+
+Before creating a release, run:
+
+```shell
+hatch run release-check
+```
+
+This performs the automated checks required before building a release artifact.
+
+Afterward, verify the built package from a clean virtual environment.
+
+### Create a clean environment
+
+On Windows PowerShell:
+
+```powershell
+python -m venv .release-test
+.\.release-test\Scripts\Activate.ps1
+```
+
+### Install the built wheel
+
+For example:
+
+```powershell
+pip install dist\filename_manager-0.1.0-py3-none-any.whl
+```
+
+Adjust the filename for the version being tested.
+
+### Verify the installed CLI
+
+```shell
+filename-manager --help
+```
+
+Perform a brief smoke test using disposable files and confirm:
+
+- prefix renaming works
+- suffix renaming works
+- extension replacement works
+- an existing destination file is never overwritten
+- unsupported regex/substitution options exit without modifying files
+
+When finished:
+
+```shell
+deactivate
+```
+
+The `.release-test` environment may then be deleted.
+
+## Release Checklist
+
+Before publishing a release:
+
+- [ ] `hatch run release-check` passes
+- [ ] the built wheel installs successfully in a clean environment
+- [ ] `filename-manager --help` works from the installed package
+- [ ] supported rename operations pass a manual smoke test
+- [ ] collision protection prevents overwriting existing files
+- [ ] GitHub Actions passes on `main`
+- [ ] package version is correct in `pyproject.toml`
+- [ ] README documentation matches the released functionality
+- [ ] release notes are prepared

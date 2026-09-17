@@ -18,7 +18,7 @@ classifiers = [
 
 [project.urls]
 "Homepage" = "https://github.com/alexcwarren/filename-manager"
-"Repository" = "https://github.com/alexwarren/filename-manager"
+"Repository" = "https://github.com/alexcwarren/filename-manager"
 "Issues" = "https://github.com/alexcwarren/filename-manager/issues"
 
 [project.optional-dependencies]
@@ -29,6 +29,7 @@ dev = [
     "ruff",
     "pre-commit",
     "mypy",
+    "build",
 ]
 
 [project.scripts]
@@ -52,6 +53,7 @@ dependencies = [
     "ruff",
     "pre-commit",
     "mypy",
+    "build",
 ]
 
 [tool.hatch.envs.default.scripts]
@@ -61,7 +63,19 @@ lint = "ruff check . --fix"
 typecheck = "mypy src tests scripts"
 test = "pytest --cov-report=xml"
 build = "python -m build"
-ci = "hatch run format && hatch run lint && hatch run typecheck && hatch run test"
+check = [
+    "ruff format . --check",
+    "ruff check .",
+    "mypy src",
+    "mypy tests",
+    "mypy scripts",
+    "pytest",
+]
+release-check = [
+    "hatch run check",
+    "hatch run clean",
+    "hatch run build",
+]
 help = """
         echo "Available commands (run with 'hatch run <command>'):"
         echo "  clean       - Clean up build artifacts and cache files."

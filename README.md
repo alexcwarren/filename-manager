@@ -84,8 +84,8 @@ IMG_002.jpg
 #### After
 
 ```shell
-Vacation_001.jpg
-Vacation_002.jpg
+Vacation_IMG_001.jpg
+Vacation_IMG_002.jpg
 ```
 
 ---
@@ -209,6 +209,7 @@ To remove `dist/` cleanly (for re-building):
 Bash
 
 ```bash
+rm -rf dist
 ```
 
 PowerShell

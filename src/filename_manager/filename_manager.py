@@ -123,6 +123,12 @@ def modify_filename(
             f"{path.parent}/{new_filepath.stem}{suffix}{new_filepath.suffix}"
         )
 
+    if new_filepath != path and new_filepath.exists():
+        raise FileExistsError(
+            f"Cannot rename '{path.name}' to '{new_filepath.name}': "
+            "destination already exists."
+        )
+
     # Replace old file with new
     path.replace(new_filepath)
 
@@ -172,7 +178,7 @@ def main() -> None:
             # args.regex,
             # args.sub,
         )
-    except (NotADirectoryError, ValueError) as e:
+    except (NotADirectoryError, ValueError, FileExistsError) as e:
         print(e)
     print()
 

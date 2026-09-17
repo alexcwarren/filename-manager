@@ -151,6 +151,10 @@ def main() -> None:
     parser.add_argument("--sub", type=str, help="substring to replace based on regex")
     args = parser.parse_args()
 
+    if args.regex is not None or args.sub is not None:
+        print("WARNING: '--regex' and '--sub' currently not supported.")
+        return
+
     try:
         modify_filenames(
             args.path,
@@ -158,8 +162,8 @@ def main() -> None:
             args.suffix,
             args.extold,
             args.extnew,
-            args.regex,
-            args.sub,
+            # args.regex,
+            # args.sub,
         )
     except (NotADirectoryError, ValueError) as e:
         print(e)

@@ -21,7 +21,6 @@ Rename files in bulk using flexible patterns — ideal for developers, content c
     - [✅ Add a prefix](#-add-a-prefix)
     - [✅ Add a suffix](#-add-a-suffix)
     - [✅ Change extension](#-change-extension)
-    - [✅ Regex pattern replace](#-regex-pattern-replace)
   - [🧪 Testing \& Coverage](#-testing--coverage)
   - [📦 Build \& Distribute](#-build--distribute)
   - [📷 Demo](#-demo)
@@ -93,8 +92,8 @@ Vacation_IMG_002.jpg
 | `-s, --suffix` | String to append to filename (before extension) |
 | `--extold` | File extension to replace |
 | `--extnew` | New file extension |
-| `-r, --regex` | Regex pattern to find in filename |
-| `--sub` | Substring to replace regex match |
+| `-r, --regex` | *(COMING SOON)* Regex pattern to find in filename |
+| `--sub` | *(COMING SOON)* Substring to replace regex match |
 | `-h, --help` | Show help message |
 
 ---
@@ -126,22 +125,6 @@ filename-manager ./my_folder --extold ALL --extnew .md
 ```
 
 Changes extension for all files to `.md`
-
-### ✅ Regex pattern replace
-
-```shell
-filename-manager ./my_folder -r "\d" --sub "X"
-```
-
-`file01.txt` → `fileXX.txt`
-
-```shell
-filename-manager ./my_folder -r "^\d+\. " --sub ""
-```
-
-`31. My File.mp3` → `My File.mp3`
-
-> ⚠️ Be cautious of overwrites when regex makes multiple filenames identical.
 
 ---
 
@@ -226,6 +209,7 @@ Remove-Item -Recurse -Force dist
 
 Planned future features:
 
+- [ ] Regex / Sub feature
 - [ ] Dry-run support
 - [ ] Undo/revert
 - [ ] Regex preview mode

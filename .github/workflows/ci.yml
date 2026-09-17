@@ -5,9 +5,9 @@ name: CI
 on:
   # The workflow will run on every push and pull request to the 'main' branch.
   push:
-    branches: [ "main", "dev", "feature/**", "chore/**", "fix/**" ]
+    branches: [ "main", "feature/**", "chore/**", "fix/**" ]
   pull_request:
-    branches: [ "main", "dev" ]
+    branches: [ "main" ]
 
 # A workflow is made up of one or more jobs.
 jobs:
@@ -55,11 +55,13 @@ jobs:
     - name: Run ruff lint
       run: ruff check .
 
-    # This step runs the mypy type checker on src and tests directories separately.
+    # This step runs the mypy type checker on src, tests, and scripts directories separately.
     - name: Run mypy on src
       run: mypy src
     - name: Run mypy on tests
       run: mypy tests
+    - name: Run mypy on scripts
+      run: mypy scripts
 
     # This step runs your pytest suite.
     - name: Run tests
